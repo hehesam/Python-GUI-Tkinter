@@ -3,10 +3,9 @@ from tkinter import *
 
 root = Tk()
 
-myLable1 = Label(root, text="Hello world")
+myLable1 = Label(root, text="Hello world").grid(row=0,column=0)
 myLable2 = Label(root, text="by world")
 
 # myLable.pack()
-myLable1.grid(row=0,column=0)
 myLable2.grid(row=1, column=1)
 root.mainloop()
