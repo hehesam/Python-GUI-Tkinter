@@ -12,7 +12,7 @@ master = Tk()
 
 # sets the geometry of main
 # root window
-master.geometry("40 0x400")
+master.geometry("400x400")
 master.title("METAFIT")
 
 
