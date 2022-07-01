@@ -1,6 +1,9 @@
+import tkinter
+
 import customtkinter
 from PIL import Image, ImageTk
 import os
+import subprocess
 
 PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -14,6 +17,15 @@ customtkinter.set_default_color_theme("dark-blue")
 def button_function():
     print("button pressed")
 
+
+def start_voice():
+    subprocess.call(["gnome-terminal", "--", "sh", "-c", "python3 deepSpeech_voice.py"])
+
+
+def start_game():
+    subprocess.call(["gnome-terminal", "--", "sh", "-c", "./rope.x86_64"])
+
+
 # login = customtkinter.CTk()
 # login.geometry("600x260")
 # login.title("Wellcome")
@@ -23,33 +35,53 @@ def button_function():
 # login.mainloop()
 
 app = customtkinter.CTk()
-app.geometry("460x260")
+app.geometry("900x800")
 app.title("METAFITT")
 
 
 image_size = 60
 
-# mic_image = ImageTk.PhotoImage(Image.open(PATH + "/bell.png").resize(image_size, image_size), Image.ANTIALIAS)
+back_image = ImageTk.PhotoImage(Image.open("bg_gr3.jpg").resize((900, 800), Image.ANTIALIAS))
+back_ground = tkinter.Label(master=app, image=back_image)
+back_ground.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+
+
 mic_image = ImageTk.PhotoImage(Image.open("mic2.png").resize((image_size, image_size), Image.ANTIALIAS))
 game_image = ImageTk.PhotoImage(Image.open("game2.png").resize((image_size+15, image_size), Image.ANTIALIAS))
+pose_image = ImageTk.PhotoImage(Image.open("man.png").resize((image_size, image_size-10), Image.ANTIALIAS))
+exit_image = ImageTk.PhotoImage(Image.open("exit.png").resize((image_size, image_size-10), Image.ANTIALIAS))
 
-frame_1 = customtkinter.CTkFrame(master=app, width=250, height=240, corner_radius=20)
-frame_1.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+frame_0 = customtkinter.CTkFrame(master=app, width=300, height=700,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
+frame_0.pack()
 
-# frame_2 = customtkinter.CTkFrame(master=app, width=250, height=240, corner_radius=40)
-# frame_2.grid(row=0, column=1, padx=10, pady=20, sticky="nsew")
+frame_1 = customtkinter.CTkFrame(master=frame_0, width=250, height=240, corner_radius=20)
+frame_1.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
 
-# frame_1.grid_columnconfigure(0, weight=1)
-# frame_1.grid_columnconfigure(1, weight=1)
-# frame_1.grid_rowconfigure(0, minsize=10)
+frame_2 = customtkinter.CTkFrame(master=frame_0, width=250, height=240, corner_radius=20)
+frame_2.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+logo = ImageTk.PhotoImage(Image.open("metafit2.jpg").resize((260, 240), Image.ANTIALIAS))
+logo_set = tkinter.Label(master=frame_2, image=logo)
+logo_set.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
 
-mic_button = customtkinter.CTkButton(master=frame_1, image=mic_image, text="voice recognition",width=190, height=40,corner_radius=20,
-                                     compound="right", fg_color="#F1521F", hover_color="#D512C3", command=button_function)
+
+mic_button = customtkinter.CTkButton(master=frame_1, image=mic_image, text="ٰVoice Recognition",width=190, height=40, corner_radius=20,
+                                     compound="right", fg_color="#F1521F", hover_color="#01D7DA", command=start_voice)
 mic_button.grid(row=1, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
 
-game_button = customtkinter.CTkButton(master=frame_1, image=game_image, text="unity game          ",width=190, height=40,corner_radius=20,
-                                     compound="right", fg_color="#F1521F", hover_color="#D512C3", command=button_function)
+game_button = customtkinter.CTkButton(master=frame_1, image=game_image, text="Unity Game          ",width=190, height=40, corner_radius=20,
+                                     compound="right", fg_color="#F1521F", hover_color="#01D7DA", command=start_game)
 game_button.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
+
+pose_button = customtkinter.CTkButton(master=frame_1, image=pose_image, text="Pose Estimation   ",width=190, height=40, corner_radius=20,
+                                     compound="right", fg_color="#F1521F", hover_color="#01D7DA", command=start_game)
+pose_button.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
+
+
+exit_button = customtkinter.CTkButton(master=frame_0, image=exit_image, text="EXIT",width=190, height=90,corner_radius=20,
+                                     compound="bottom", border_color="#D35B58", fg_color=("gray84", "gray25"), hover_color="#E30C2A", command=app.quit)
+
+exit_button.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")
+
 
 app.mainloop()
 

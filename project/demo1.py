@@ -18,7 +18,7 @@ master.title("METAFIT")
 
 def thing(my_label):
     my_label.config(text="You clicked the button...")
-    # subprocess.call(["gnome-terminal", "--", "sh", "-c", "python3 deepSpeech_voice.py"])
+    subprocess.call(["gnome-terminal", "--", "sh", "-c", "python3 deepSpeech_voice.py"])
     subprocess.call(["gnome-terminal", "--", "sh", "-c", "./rope.x86_64"])
 
 

@@ -58,8 +58,8 @@ button_4 = customtkinter.CTkButton(master=frame_1, image=home_image, text="", wi
                                    corner_radius=10, fg_color="gray40", hover_color="gray25", command=button_function)
 button_4.grid(row=3, column=1, columnspan=1, padx=20, pady=10, sticky="e")
 
-button_5 = customtkinter.CTkButton(master=app, image=add_user_image, text="Add User", width=130, height=70, border_width=3,
-                                   corner_radius=10, compound="bottom", border_color="#D35B58", fg_color=("gray84", "gray25"), hover_color="#C77C78",
+button_5 = customtkinter.CTkButton(master=app, image=add_user_image, text="Add User", width=130, height=70, border_width=10,
+                                       corner_radius=10, compound="bottom", border_color="#01D7DA", fg_color=("gray84", "gray25"), hover_color="#C77C78",
                                    command=button_function)
 button_5.grid(row=0, column=1, padx=20, pady=20)
 
