@@ -9,10 +9,9 @@ import webrtcvad
 from halo import Halo
 from scipy import signal
 
-#my code:
+from tkinter import *
 
-# import rasbery
-
+god_voice = ""
 
 logging.basicConfig(level=20)
 
@@ -204,7 +203,9 @@ def main(ARGS):
                 vad_audio.write_wav(os.path.join(ARGS.savewav, datetime.now().strftime("savewav_%Y-%m-%d_%H-%M-%S_%f.wav")), wav_data)
                 wav_data = bytearray()
             text = stream_context.finishStream()
-            print("Recognized: %s" % text)
+            god_voice = text
+            print(text)
+            # print("Recognized: %s" % text)
             stream_context = model.createStream()
             # print("stream context type \n\n",stream_context)
             # print("frame \n\n", type(frame))
@@ -246,4 +247,22 @@ def start_voice():
     if ARGS.savewav: os.makedirs(ARGS.savewav, exist_ok=True)
     main(ARGS)
 
-start_voice()
+
+def GUI():
+    master = Tk()
+
+    master.geometry("400x400")
+    master.title("deepSpeech")
+
+    voice_text = Label(master, text=god_voice)
+    voice_text.pack()
+    master.mainloop()
+
+# start_voice()
+# GUI()
+
+t1 = threading.Thread(target=start_voice)
+t2 = threading.Thread(target=GUI)
+
+t1.start()
+t2.start()
