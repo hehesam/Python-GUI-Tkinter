@@ -60,4 +60,4 @@ def GUI():
 # t1=threading.Thread(target=por1)
 # t1.start()
 
-# GUI()
+GUI()

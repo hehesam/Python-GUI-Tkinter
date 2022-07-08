@@ -1,0 +1,126 @@
+import tkinter
+import customtkinter
+from PIL import Image, ImageTk
+import os
+import subprocess
+
+
+class sampleApp(customtkinter.CTk):
+
+    def __init__(self):
+        super().__init__()
+        self.title("main")
+        self.geometry('900x800')
+
+
+        container = customtkinter.CTkFrame(master=self,fg_color='#01D7DA')
+
+        container.pack(side='top', fill='both', expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+
+
+
+        self.frames = {}
+
+        for F in (mainPage, UnityGame, PoseEstimation):
+            page_name = F.__name__
+            frame = F(parent=container, controller=self)
+            self.frames[page_name] = frame
+
+            frame.grid(row=0, column=0, sticky="nsew")
+            # frame.pack()
+
+        self.show_frame("mainPage")
+
+    def show_frame(self, page_name):
+        frame = self.frames[page_name]
+        frame.tkraise()
+
+
+class mainPage(customtkinter.CTkFrame):
+    def __init__(self, parent, controller):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.controller = controller
+
+        image_size = 60
+
+        mic_image = ImageTk.PhotoImage(Image.open("resource/mic2.png").resize((image_size, image_size), Image.ANTIALIAS))
+        game_image = ImageTk.PhotoImage(Image.open("resource/game2.png").resize((image_size + 15, image_size), Image.ANTIALIAS))
+        pose_image = ImageTk.PhotoImage(Image.open("resource/man.png").resize((image_size, image_size - 10), Image.ANTIALIAS))
+        exit_image = ImageTk.PhotoImage(Image.open("resource/exit.png").resize((image_size, image_size - 10), Image.ANTIALIAS))
+
+
+        frame_0 = customtkinter.CTkFrame(master=self, width=300, height=700,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
+        frame_0.pack()
+
+        label_1 = customtkinter.CTkLabel(frame_0, text="this is the main page",width=190, height=90,)
+        label_1.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
+
+        game_button = customtkinter.CTkButton(master=frame_0, image=game_image, text="Unity Game          ", width=190,
+                                              height=40, corner_radius=20,
+                                              compound="right", fg_color="#F1521F", hover_color="#01D7DA",
+                                              command=lambda : controller.show_frame("UnityGame"))
+
+        game_button.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+
+
+
+        pose_button = customtkinter.CTkButton(master=frame_0, image=pose_image, text="Pose Estimation   ", width=190,
+                                              height=40, corner_radius=20,
+                                              compound="right", fg_color="#F1521F", hover_color="#01D7DA",
+                                              command=lambda : controller.show_frame("PoseEstimation"))
+        pose_button.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+
+
+
+        exit_button = customtkinter.CTkButton(master=frame_0, text="EXIT",width=210, height=90,corner_radius=20,
+                                     compound="bottom", border_color="#D35B58", fg_color=("gray84", "gray25"), hover_color="#E30C2A", command=self.quit)
+        exit_button.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
+
+
+class UnityGame(customtkinter.CTkFrame):
+    def __init__(self, parent, controller):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.controller = controller
+
+        frame_0 = customtkinter.CTkFrame(master=self, width=300, height=700,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
+        frame_0.pack()
+
+        start_button = customtkinter.CTkButton(master=frame_0, text="Start Game", width=190,
+                                              height=40, corner_radius=20,
+                                              compound="right", fg_color="#F1521F", hover_color="#01D7DA",
+                                              command=lambda : self.startGame())
+
+        start_button.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+
+
+
+        back_button = customtkinter.CTkButton(master=frame_0, text="Back   ", width=190,
+                                              height=40, corner_radius=20,
+                                              compound="right", fg_color="#F1521F", hover_color="#01D7DA",
+                                              command=lambda : controller.show_frame("mainPage"))
+        back_button.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+
+
+    def startGame(self):
+        subprocess.call(["gnome-terminal", "--", "sh", "-c", "./unity_game2/rope.x86_64"])
+
+
+
+class PoseEstimation(customtkinter.CTkFrame):
+    def __init__(self, parent, controller):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.controller = controller
+
+        label = customtkinter.CTkLabel(self, text="PoseEstimation")
+        label.pack()
+
+        button1 = customtkinter.CTkButton(self, text="go to main page",
+                                          command=lambda: controller.show_frame("mainPage"))
+
+        button1.pack()
+
+app = sampleApp()
+app.mainloop()

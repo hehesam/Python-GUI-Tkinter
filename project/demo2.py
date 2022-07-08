@@ -4,7 +4,6 @@ import customtkinter
 from PIL import Image, ImageTk
 import os
 import subprocess
-from pico_voice import pico
 
 PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -20,11 +19,7 @@ def button_function():
 
 
 def start_voice(frame_1):
-    blanket = customtkinter.CTkEntry(frame_1, width=190, height=40)
-    blanket.grid(row=4, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
-    word = pico()
-    blanket.insert(0, word)
-    # subprocess.call(["gnome-terminal", "--", "sh", "-c", "python3 pico_voice.py"])
+    subprocess.call(["gnome-terminal", "--", "sh", "-c", "python3 pico_voice.py"])
 
 def start_game():
     subprocess.call(["gnome-terminal", "--", "sh", "-c", "./unity_game2/rope.x86_64"])
@@ -63,6 +58,13 @@ frame_1.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
 
 frame_2 = customtkinter.CTkFrame(master=frame_0, width=250, height=240, corner_radius=20)
 frame_2.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+
+frame_voice = customtkinter.CTkFrame(master=app, width=300, height=700,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
+frame_voice_label = customtkinter.CTkLabel(master=frame_voice, text="newwenw")
+frame_voice_label.grid(row=1, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
+frame_voice.pack()
+frame_voice.tkraise()
+
 logo = ImageTk.PhotoImage(Image.open("resource/metafit2.jpg").resize((260, 240), Image.ANTIALIAS))
 logo_set = tkinter.Label(master=frame_2, image=logo)
 logo_set.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
