@@ -3,9 +3,7 @@ import pyaudio
 import pvporcupine
 import threading
 import time
-from time import sleep
-from tkinter import  *
-
+import redis
 porcupine = None
 pa = None
 audio_stream = None
@@ -13,7 +11,7 @@ audio_stream = None
 
 pa = pyaudio.PyAudio()
 
-def pico():
+def start():
         porcupine = pvporcupine.create(access_key='1Abqm0SPQtUR4iFUuBFEepTjGpDoD5RN8XrpjlbAVJp2nk8WSiyh/Q==',
         keyword_paths = ['~/programs/python/python-GUI-tkinter/project/voice_pico/engine-start_en_linux_v2_1_0.ppn'])
         audio_stream = pa.open(
@@ -29,35 +27,46 @@ def pico():
             pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
             keyword_index = porcupine.process(pcm)
-            # print(keyword_index)
+            r = redis.Redis(host='localhost', port=6379)
             if not keyword_index :
-                # print("engine start")
+                r.set("engine start", 1)
+                print("engine start")
                 # print(time.time()-ss)
-                audio_stream.close()
-                return "engine start"
-
-    # finally:
-    #     if porcupine is not None:
-    #         porcupine.delete()
-    #
-    #     if audio_stream is not None:
-    #         audio_stream.close()
-    #
-    #     if pa is not None:
-    #             pa.terminate()
+                # audio_stream.close()
+            else :
+                r.set("engine start", 0)
 
 
-def GUI():
+def stop():
+    porcupine = pvporcupine.create(access_key='1Abqm0SPQtUR4iFUuBFEepTjGpDoD5RN8XrpjlbAVJp2nk8WSiyh/Q==',
+                                   keyword_paths=[
+                                       '~/programs/python/python-GUI-tkinter/project/voice_pico/engine-stop_en_linux_v2_1_0.ppn'])
+    audio_stream = pa.open(
+        rate=porcupine.sample_rate,
+        channels=1,
+        format=pyaudio.paInt16,
+        input=True,
+        frames_per_buffer=porcupine.frame_length)
 
-    app = Tk()
-    app.geometry('400x600')
-    plabel = Label(master=app, text=pico())
+    while True:
+        ss = time.time()
+        pcm = audio_stream.read(porcupine.frame_length)
+        pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
-    plabel.pack()
-    app.mainloop()
+        keyword_index = porcupine.process(pcm)
+        r = redis.Redis(host='localhost', port=6379)
+        if not keyword_index:
+            r.set("engine stop", 1)
+            print("engine stop")
+            # print(time.time()-ss)
+            # audio_stream.close()
+        else :
+            r.set("engine stop", 0)
 
-#
-# t1=threading.Thread(target=por1)
-# t1.start()
 
-GUI()
+t1=threading.Thread(target=start)
+t2=threading.Thread(target=stop)
+
+t1.start()
+t2.start()
+# start()
