@@ -6,7 +6,7 @@ import subprocess
 import redis
 import threading
 import time
-
+from tkinter import END
 
 
 class sampleApp(customtkinter.CTk):
@@ -15,7 +15,7 @@ class sampleApp(customtkinter.CTk):
         super().__init__()
         self.title("main")
         self.geometry('900x800')
-
+        self.voice_state = False
 
         container = customtkinter.CTkFrame(master=self, width=900, height=700)
 
@@ -26,6 +26,9 @@ class sampleApp(customtkinter.CTk):
         switch_frame = customtkinter.CTkFrame(master=self, width=900, height=100)
         switch_frame.pack(side='bottom', fill='both', expand=True)
         self.switch_frame = switch_frame
+        self.state = customtkinter.CTkEntry(self.switch_frame)
+        self.state.pack(side='right', fill='both')
+
         voice_switch = customtkinter.CTkSwitch(master=switch_frame, text="Voice Control", width=72,
                                               height=30, corner_radius=20, fg_color="#F1521F",
                                               command=lambda : self.voice())
@@ -52,31 +55,36 @@ class sampleApp(customtkinter.CTk):
         frame.tkraise()
 
     def voice(self):
-        subprocess.call(["gnome-terminal", "--", "sh", "-c", "python3 pico_voice.py"])
+        self.voice_thread = threading.Thread(target=self.read_voice)
+        # self.voice_thread.join()
 
-        t = threading.Thread(target=self.read_voice)
-        t.start()
+        if self.voice_state == False:
+            subprocess.run(["gnome-terminal", "--", "sh", "-c", "python3 pico_voice.py"], shell=True) # show the terminal "gnome-terminal", "--",
+            self.voice_state = True
+            self.voice_thread.start()
+        else:
+            self.voice_state = False
 
     def read_voice(self):
         r = redis.Redis(host='localhost', port=6379)
-
-        state = customtkinter.CTkEntry(self.switch_frame)
-        state.pack(side='right', fill='both')
-        state.insert(0,"test")
-        END = len(state.get())
-        while 1 :
+        r.set("start pico voice", 1)
+        while True:
+            if not self.voice_state:
+                self.state.insert(0, "stopped listening")
+                r.set("end pico process", 1)
+                break
             start_state = int(r.get("engine start"))
             stop_state = int(r.get("engine stop"))
             if stop_state or start_state:
                 if stop_state :
-                    state.delete(0,END)
-                    state.insert(0, 'stop')
+                    self.state.delete(0,END)
+                    self.state.insert(0, 'stop')
 
                 if start_state :
-                    state.delete(0,END)
-                    state.insert(0, 'start')
+                    self.state.delete(0,END)
+                    self.state.insert(0, 'start')
                 time.sleep(1)
-                state.delete(0, END)
+                self.state.delete(0, END)
 
 
 class mainPage(customtkinter.CTkFrame):

@@ -21,13 +21,15 @@ def start():
                         input=True,
                         frames_per_buffer=porcupine.frame_length)
 
+        r = redis.Redis(host='localhost', port=6379)
+        r.set("end pico process", 0)
+
         while True:
             ss = time.time()
             pcm = audio_stream.read(porcupine.frame_length)
             pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
             keyword_index = porcupine.process(pcm)
-            r = redis.Redis(host='localhost', port=6379)
             if not keyword_index :
                 r.set("engine start", 1)
                 print("engine start")
@@ -35,6 +37,10 @@ def start():
                 # audio_stream.close()
             else :
                 r.set("engine start", 0)
+
+            if int(r.get("end pico process")) == 1:
+                print("by")
+                break
 
 
 def stop():
@@ -48,13 +54,15 @@ def stop():
         input=True,
         frames_per_buffer=porcupine.frame_length)
 
+    r = redis.Redis(host='localhost', port=6379)
+    r.set("end pico process", 0)
+
     while True:
         ss = time.time()
         pcm = audio_stream.read(porcupine.frame_length)
         pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
         keyword_index = porcupine.process(pcm)
-        r = redis.Redis(host='localhost', port=6379)
         if not keyword_index:
             r.set("engine stop", 1)
             print("engine stop")
@@ -62,6 +70,11 @@ def stop():
             # audio_stream.close()
         else :
             r.set("engine stop", 0)
+
+        if int(r.get("end pico process")) == 1:
+            print("by")
+            time.sleep(1)
+            break
 
 
 t1=threading.Thread(target=start)
