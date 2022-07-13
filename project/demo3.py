@@ -59,7 +59,7 @@ class sampleApp(customtkinter.CTk):
         # self.voice_thread.join()
 
         if self.voice_state == False:
-            subprocess.run(["gnome-terminal", "--", "sh", "-c", "python3 pico_voice.py"], shell=True) # show the terminal "gnome-terminal", "--",
+            # subprocess.run(["gnome-terminal", "--", "sh", "-c", "python3 pico_voice.py"], shell=True) # show the terminal "gnome-terminal", "--",
             self.voice_state = True
             self.voice_thread.start()
         else:
@@ -67,7 +67,7 @@ class sampleApp(customtkinter.CTk):
 
     def read_voice(self):
         r = redis.Redis(host='localhost', port=6379)
-        r.set("start pico voice", 1)
+        r.set("start pico process", 1)
         while True:
             if not self.voice_state:
                 self.state.insert(0, "stopped listening")
@@ -159,7 +159,9 @@ class UnityGame(customtkinter.CTkFrame):
 
 
     def startGame(self):
-        subprocess.call(["gnome-terminal", "--", "sh", "-c", "./unity_game2/rope.x86_64"])
+        # subprocess.call(["gnome-terminal", "--", "sh", "-c", "./unity_game2/rope.x86_64"])
+        r = redis.Redis(host='localhost', port=6379)
+        r.set("start unity process", 1)
 
 
 
