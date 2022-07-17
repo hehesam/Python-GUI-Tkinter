@@ -17,7 +17,10 @@ def start_unity():
 r = redis.Redis(host='localhost', port=6379)
 r.set("start pico process", 0)
 r.set("start unity process", 0)
-for i in range(999):
+# for i in range(999):
+i = 0
+while 1 :
+    i += 1
     time.sleep(0.1)
     print("loop: ",i, int(r.get("start pico process")))
     if int (r.get("start pico process")) == 1:

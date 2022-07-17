@@ -14,7 +14,7 @@ class sampleApp(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.title("main")
-        self.geometry('900x800')
+        self.geometry('1600x900')
         self.voice_state = False
 
         container = customtkinter.CTkFrame(master=self, width=900, height=700)
