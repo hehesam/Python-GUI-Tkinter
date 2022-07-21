@@ -135,7 +135,7 @@ class UnityGame(customtkinter.CTkFrame):
         customtkinter.CTkFrame.__init__(self, parent)
         self.controller = controller
 
-        frame_1 = customtkinter.CTkFrame(master=self, width=500, height=500,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
+        frame_1 = customtkinter.CTkFrame(master=self, width=700, height=600,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
         frame_1.pack()
 
         frame_0 = customtkinter.CTkFrame(master=self, width=300, height=700,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
