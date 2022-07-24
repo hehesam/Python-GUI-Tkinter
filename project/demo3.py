@@ -7,6 +7,8 @@ import redis
 import threading
 import time
 from tkinter import END
+import numpy as np
+import cv2
 
 
 class sampleApp(customtkinter.CTk):
@@ -126,8 +128,17 @@ class mainPage(customtkinter.CTkFrame):
 
 
         exit_button = customtkinter.CTkButton(master=frame_0, text="EXIT",width=210, height=90,corner_radius=20,
-                                     compound="bottom", border_color="#D35B58", fg_color=("gray84", "gray25"), hover_color="#E30C2A", command=self.quit)
+                                     compound="bottom", border_color="#D35B58", fg_color=("gray84", "gray25"), hover_color="#E30C2A", command=self.quit_front)
         exit_button.grid(row=5, column=0, padx=20, pady=20, sticky="nsew")
+
+    def quit_front(self):
+        r = redis.Redis(host='localhost', port=6379)
+        r.set('front_end', 'stop')
+        res = r.get('front_end')
+        if res == 'stop':
+            print('whoooooooooooooo')
+        self.quit()
+
 
 
 class UnityGame(customtkinter.CTkFrame):
@@ -169,16 +180,55 @@ class PoseEstimation(customtkinter.CTkFrame):
     def __init__(self, parent, controller):
         customtkinter.CTkFrame.__init__(self, parent)
         self.controller = controller
+        frame_1 = customtkinter.CTkFrame(master=self, width=700, height=600,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
+        frame_1.pack()
+        frame_0 = customtkinter.CTkFrame(master=self, width=300, height=700,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
+        frame_0.pack()
 
-        label = customtkinter.CTkLabel(self, text="PoseEstimation")
-        label.pack()
+        self.lmain = customtkinter.CTkLabel(master=frame_1)
+        self.lmain.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
 
-        button1 = customtkinter.CTkButton(self, text="go to main page",
-                                          command=lambda: controller.show_frame("mainPage"))
+        start_button = customtkinter.CTkButton(master=frame_0, text="Start Pose", width=190,
+                                              height=40, corner_radius=20,
+                                              compound="right", fg_color="#F1521F", hover_color="#01D7DA",
+                                              command=lambda : self.startpose())
 
-        button1.pack()
+        start_button.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+
+
+
+        back_button = customtkinter.CTkButton(master=frame_0, text="Back   ", width=190,
+                                              height=40, corner_radius=20,
+                                              compound="right", fg_color="#F1521F", hover_color="#01D7DA",
+                                              command=lambda : controller.show_frame("mainPage"))
+        back_button.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+
+    def startpose(self):
+        r = redis.Redis(host='localhost', port=6379)
+        r.set("start pose process", 1)
+
+        self.video_stream()
+
+    def video_stream(self):
+
+
+        # print('hi')
+        r = redis.Redis(host='localhost', port=6379)
+        data = r.get('pose_frame')
+        if data == 'stop':
+            return
+        nparr = np.frombuffer(data, np.uint8)
+        newFrame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        # cv2.imshow("s", newFrame)
+        cv2image = cv2.cvtColor(newFrame, cv2.COLOR_BGR2RGBA)
+
+        img = Image.fromarray(cv2image)
+        imgtk = ImageTk.PhotoImage(image=img)
+        self.lmain.imgtk = imgtk
+        self.lmain.configure(image=imgtk)
+        self.lmain.after(1, self.video_stream)
 
 app = sampleApp()
-subprocess.run(   ["gnome-terminal", "--" , "sh", "-c", "python3 control_panel.py"])
+subprocess.run(["gnome-terminal", "--" , "sh", "-c", "python3 control_panel.py"])
 
 app.mainloop()
