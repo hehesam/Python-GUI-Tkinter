@@ -179,4 +179,6 @@ class PoseEstimation(customtkinter.CTkFrame):
         button1.pack()
 
 app = sampleApp()
+subprocess.run(   ["gnome-terminal", "--" , "sh", "-c", "python3 control_panel.py"])
+
 app.mainloop()
