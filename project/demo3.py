@@ -193,30 +193,45 @@ class PoseEstimation(customtkinter.CTkFrame):
                                               compound="right", fg_color="#F1521F", hover_color="#01D7DA",
                                               command=lambda : self.startpose())
 
-        start_button.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+        start_button.grid(row=2, column=0, columnspan=1, padx=20, pady=10, sticky="nsew")
 
+        stop_button = customtkinter.CTkButton(master=frame_0, text="Stop Pose", width=190,
+                                              height=40, corner_radius=20,
+                                              compound="right", fg_color="#F1521F", hover_color="#01D7DA",
+                                              command=lambda : self.stoppose())
 
+        stop_button.grid(row=2, column=1, columnspan=1, padx=20, pady=10, sticky="nsew")
 
         back_button = customtkinter.CTkButton(master=frame_0, text="Back   ", width=190,
                                               height=40, corner_radius=20,
                                               compound="right", fg_color="#F1521F", hover_color="#01D7DA",
                                               command=lambda : controller.show_frame("mainPage"))
-        back_button.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+        back_button.grid(row=3, column=0, columnspan=2, padx=20, pady=10, )
+
+    def stoppose(self):
+        r = redis.Redis(host='localhost', port=6379)
+        r.set("stop pose process", 1)
 
     def startpose(self):
         r = redis.Redis(host='localhost', port=6379)
-        r.set("start pose process", 1)
 
+        r.set("stop pose process", 0)
+        # if int(r.get('running pose')) == 1:
+        #     return
+        r.set("start pose process", 1)
         self.video_stream()
 
     def video_stream(self):
 
 
-        # print('hi')
         r = redis.Redis(host='localhost', port=6379)
+
         data = r.get('pose_frame')
+        print(data)
         if data == 'stop':
+            print('yoohooo')
             return
+
         nparr = np.frombuffer(data, np.uint8)
         newFrame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         # cv2.imshow("s", newFrame)

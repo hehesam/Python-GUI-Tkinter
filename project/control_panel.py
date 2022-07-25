@@ -17,13 +17,14 @@ def start_unity():
 def start_pose():
     print("pose threadyyyyyyyyyyyyyyf\n\nyyyyyyyy")
 
-    subprocess.run(subprocess.call(["sh", "-c", "python3 pose_estimation/Blazepose.py"]))
+    subprocess.run(subprocess.call(["gnome-terminal", "--","sh", "-c", "python3 Blazepose.py"]))
 
 
 r = redis.Redis(host='localhost', port=6379)
 r.set("start pico process", 0)
 r.set("start unity process", 0)
 r.set("start pose process", 0)
+
 i = 0
 while 1 :
 
