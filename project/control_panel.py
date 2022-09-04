@@ -24,12 +24,12 @@ r = redis.Redis(host='localhost', port=6379)
 r.set("start pico process", 0)
 r.set("start unity process", 0)
 r.set("start pose process", 0)
-
+r.set("front_end", 1)
 i = 0
 while 1 :
 
-    res = r.get('front_end')
-    if res == 'stop':
+    res = int(r.get('front_end'))
+    if res == 0:
         break
 
     i += 1

@@ -133,9 +133,9 @@ class mainPage(customtkinter.CTkFrame):
 
     def quit_front(self):
         r = redis.Redis(host='localhost', port=6379)
-        r.set('front_end', 'stop')
-        res = r.get('front_end')
-        if res == 'stop':
+        r.set('front_end', 0)
+        res = int(r.get('front_end'))
+        if res == 0:
             print('whoooooooooooooo')
         self.quit()
 
