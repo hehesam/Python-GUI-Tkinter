@@ -309,10 +309,9 @@ class Blazepose:
             r = redis.Redis(host='localhost', port=6379)
             data = cv2.imencode('.jpg', annotated_frame)[1].tostring()
             r.set('pose_frame', data)
-            print("snap", r.get("stop pose process"))
+            # print("snap", r.get("stop pose process"))
             if int(r.get("stop pose process")) == 1:
-                r.set('pose_frame', 'stop')
-                time.sleep(0.5)
+                # r.set('pose_frame', 'stop')
                 break
 
 #---------------------------------------------------------------------------------------------------------------------------------------------

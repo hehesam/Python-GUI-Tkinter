@@ -180,6 +180,8 @@ class PoseEstimation(customtkinter.CTkFrame):
     def __init__(self, parent, controller):
         customtkinter.CTkFrame.__init__(self, parent)
         self.controller = controller
+        self.pose_state = False
+
         frame_1 = customtkinter.CTkFrame(master=self, width=700, height=600,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
         frame_1.pack()
         frame_0 = customtkinter.CTkFrame(master=self, width=300, height=700,border_width=3 ,corner_radius=20, border_color="#F1521F" ,fg_color="#1A1A1A")
@@ -212,6 +214,7 @@ class PoseEstimation(customtkinter.CTkFrame):
         r = redis.Redis(host='localhost', port=6379)
         r.set("stop pose process", 1)
 
+
     def startpose(self):
         r = redis.Redis(host='localhost', port=6379)
 
@@ -219,7 +222,15 @@ class PoseEstimation(customtkinter.CTkFrame):
         # if int(r.get('running pose')) == 1:
         #     return
         r.set("start pose process", 1)
-        self.video_stream()
+        self.pose_thread = threading.Thread(target=self.video_stream)
+        if not self.pose_state:
+            self.pose_thread.start()
+            print("pose thread started ")
+            self.pose_state = True
+        else :
+            self.pose_state = False
+
+        # self.video_stream()
 
     def video_stream(self):
 
@@ -227,8 +238,8 @@ class PoseEstimation(customtkinter.CTkFrame):
         r = redis.Redis(host='localhost', port=6379)
 
         data = r.get('pose_frame')
-        print(data)
-        if data == 'stop':
+        # print(data)
+        if int(r.get("stop pose process")) == 1:
             print('yoohooo')
             return
 

@@ -40,7 +40,7 @@ app.title("METAFITT")
 
 image_size = 60
 
-back_image = ImageTk.PhotoImage(Image.open("resource/bg_gr3.jpg").resize((900, 800), Image.ANTIALIAS))
+back_image = ImageTk.PhotoImage(Image.open("resource/eback.jpg").resize((900, 800), Image.ANTIALIAS))
 back_ground = tkinter.Label(master=app, image=back_image)
 back_ground.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
 

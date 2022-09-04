@@ -34,6 +34,7 @@ lmain.pack()
 cap = cv2.VideoCapture(0)
 
 # function for video streaming
+
 def video_stream():
     print(1)
     _, frame = cap.read()

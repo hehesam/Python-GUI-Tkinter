@@ -12,12 +12,12 @@ def start_voice():
 def start_unity():
     print("unity thread")
     subprocess.run(
-        subprocess.call(["sh", "-c", "./unity_game2/rope.x86_64"]))
+        subprocess.call(["sh", "-c", "./unity_game3/rope.x86_64"]))
 
 def start_pose():
     print("pose threadyyyyyyyyyyyyyyf\n\nyyyyyyyy")
 
-    subprocess.run(subprocess.call(["gnome-terminal", "--","sh", "-c", "python3 Blazepose.py"]))
+    subprocess.run(subprocess.call(["sh", "-c", "python3 Blazepose.py"]))
 
 
 r = redis.Redis(host='localhost', port=6379)
